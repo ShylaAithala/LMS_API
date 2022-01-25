@@ -8,4 +8,5 @@ import com.ninja.lms.entity.Program;
 @Repository
 public interface ProgramRepository extends JpaRepository<Program, Integer>{
 
+	
 }

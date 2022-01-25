@@ -24,8 +24,7 @@ public class Program {
 	@Column
 	Timestamp last_mod_time;
 	
-	
-	
+		
 	public int getProgram_id() {
 		return program_id;
 	}

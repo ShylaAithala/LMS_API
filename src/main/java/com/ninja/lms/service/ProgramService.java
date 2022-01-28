@@ -3,6 +3,7 @@ package com.ninja.lms.service;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -13,19 +14,53 @@ import com.ninja.lms.exception.DataNotFoundException;
 import com.ninja.lms.exception.FieldValidationException;
 import com.ninja.lms.repository.ProgramRepository;
 
+/**
+ * Service class for Program
+ * With Get, Post, Update, Delete methods and validations
+ * @author vidsdn
+ *
+ */
+
 @Service
 public class ProgramService {
 	
 	@Resource
 	ProgramRepository programRepo;
 	
-	
-	public List<Program>getAllPrograms(){
+	/**Get all programs**/
+	public List<Program> getAllPrograms(){
 		return programRepo.findAll();
 	}
 	
+	/**
+	 * Get Program details for a single Program using ProgramId
+	 * @param programId
+	 */
+	public Optional<Program> getProgram(int programId) {
+		return programRepo.findById(programId);
+	}
 
+	/**
+	 * Create new Program 
+	 * @param accepts required program fields. 
+	 */
 	public Program createPrograms(Program newProgram) {
+		
+		//Check if Program Name is null or blank
+		if (newProgram.getProgram_name() ==null || newProgram.getProgram_name().isBlank()) {
+			throw new FieldValidationException("Cannot create Program as Program Name cannot be null or blank");
+		}
+		
+		//Check if Program Name already exists
+		List<Program> programList = programRepo.findAll();
+		if(programList.size() > 0) 
+		{
+			boolean isProgramNameExists = checkDuplicateProgramName(programList, newProgram.getProgram_name());
+			if(isProgramNameExists) 
+			{
+				throw new FieldValidationException("Cannot create Program as Program Name already exists");
+			}
+		}
 		
 		Date utilDate = new Date();
 		newProgram.setCreation_time(new Timestamp(utilDate.getTime()));
@@ -37,16 +72,16 @@ public class ProgramService {
 	}
 	
 	/**
-	 * @param updatedProgram
+	 * Updates a Program with given details.
+	 * 
+	 * @param updatedProgram - from request body
 	 * @param programId
 	 * @return
 	 * @throws Exception
 	 */
 	public Program updateProgram(Program updatedProgram, int programId) throws Exception {
 		
-		//check if id exists or not
-		//pass program name - not null
-		
+		/**Check if there is programs available in the db.**/
 		List<Program> programList = programRepo.findAll();
 		if(programList.size() == 0) {
 			throw new DataNotFoundException("No program data available !!");
@@ -57,43 +92,44 @@ public class ProgramService {
 		if(!isProgramIdExists) {
 			throw new DataNotFoundException("Program ID-> " + programId + " Not Found !!");
 		}
-		
-		
+
 		Program existingProgram = new Program();
 		for(Program itr : programList) {
 			if(itr.getProgram_id() == programId) {
 				existingProgram = itr;
 			}
 		}
-		
-		 System.out.println("updatedProgram.getProgram_name()" + updatedProgram.getProgram_name());
-		 System.out.println("existingProgram.getProgram_name()" + existingProgram.getProgram_name());
-		  if((updatedProgram.getProgram_name() != null) && (updatedProgram.getProgram_name() != existingProgram.getProgram_name())) {
-				  //.equals(existingProgram.getProgram_name())
-			  	//check if program Name already exists
-			  System.out.println("checking program name for duplicates");
+		if((updatedProgram.getProgram_name() != null) && (updatedProgram.getProgram_name() != existingProgram.getProgram_name()))
+		{
+			  /**check if program Name already exists */
 			  boolean isProgramNameExists = checkDuplicateProgramName(programList, updatedProgram.getProgram_name());
-			  if(isProgramNameExists) {
+			  if(isProgramNameExists) 
+			  {
 				  throw new FieldValidationException("Failed to update existing Program details as Program Name already exists !!");
 			  }
 		  }
-		  else {
+		  else 
+		  {
 			  updatedProgram.setProgram_name(existingProgram.getProgram_name()); 
 		  }
-		updatedProgram.setProgram_id(existingProgram.getProgram_id());
 		
-		//updatedProgram.setProgram_name(existingProgram.getProgram_name());
+		updatedProgram.setProgram_id(existingProgram.getProgram_id());
 		
 		Date utilDate = new Date();
 		updatedProgram.setCreation_time(new Timestamp(utilDate.getTime()));
 		updatedProgram.setLast_mod_time(new Timestamp(utilDate.getTime()));
-		
+
 		programRepo.save(updatedProgram);
 		return updatedProgram;
 		
 	}
 
-	
+
+	/**
+	 * Delete Program for a given ProgramId
+	 * @param programId - from Request URL
+	 * @throws Exception
+	 */
 	public void deleteProgram(int programId) throws Exception{
 		boolean isProgramIdExists = programRepo.existsById(programId);
 		if(!isProgramIdExists) {
@@ -105,7 +141,12 @@ public class ProgramService {
 
 	}
 	
-	
+	/**
+	 * Check if ProgramId exists or not
+	 * @param programList
+	 * @param programId
+	 * @return
+	 */
 	private boolean checkForExistingProgramId(List<Program> programList, int programId) {
     	boolean isExists = false;
     	
@@ -118,23 +159,25 @@ public class ProgramService {
     	return isExists;
     }
 	
+	
+	/**
+	 * Checks if Duplicate Program Name exists in DB (program Name is Unique)
+	 * @param programList
+	 * @param programName
+	 * @return
+	 */
 	private boolean checkDuplicateProgramName(List<Program> programList, String programName){
 		boolean isPresent = false;
-		System.out.println("inside checkDuplicateProgramName --- programName" + programName);
-		
 		for(Program program : programList) {
-			System.out.println("inside for : program.getProgram_id()" + program.getProgram_id() + "Program Name" + program.getProgram_name());
 			if(program.getProgram_name().equals(programName)) {
-				System.out.println("passed programName" + programName);
-				System.out.println("program.getProgram_name() " + program.getProgram_name() );
 				isPresent = true;
 				break;
 			}
-			
 		}
-		System.out.println("isPresent duplicate program Name" + isPresent);
 		return isPresent;
 		
 	}
-	
+
+
+
 }

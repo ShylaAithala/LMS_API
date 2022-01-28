@@ -5,30 +5,35 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 
 
 @Entity
 @Table(name="TBL_LMS_BATCH")
-public class Batch implements Serializable{
+public class Batch {
 	
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	@Id
 	@Column
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int batch_id;
-	@Column
-	String batch_name;
+	@Column(name="batch_name")
+	String batchName;
 	@Column
 	String batch_description;
 	@Column
 	String batch_status;
-	@Column
-	int batch_program_id;
+	@Column(name="batch_program_id")
+	int batchPId;
 	@Column
 	int batch_no_of_classes;
 	@Column
@@ -44,10 +49,10 @@ public class Batch implements Serializable{
 		this.batch_id = batch_id;
 	}
 	public String getBatch_name() {
-		return batch_name;
+		return batchName;
 	}
 	public void setBatch_name(String batch_name) {
-		this.batch_name = batch_name;
+		this.batchName = batch_name;
 	}
 	public String getBatch_description() {
 		return batch_description;
@@ -62,10 +67,10 @@ public class Batch implements Serializable{
 		this.batch_status = batch_status;
 	}
 	public int getBatch_program_id() {
-		return batch_program_id;
+		return batchPId;
 	}
 	public void setBatch_program_id(int batch_program_id) {
-		this.batch_program_id = batch_program_id;
+		this.batchPId = batch_program_id;
 	}
 	public int getBatch_no_of_classes() {
 		return batch_no_of_classes;

@@ -17,7 +17,7 @@ import com.ninja.lms.entity.ExceptionResponse;
 
 @ControllerAdvice
 @RestController
-public class CustomizedResponseEntityExceptionHandler{
+public class CustomExceptionHandler{
 	
 	private static ObjectMapper mapper = new ObjectMapper();
 	

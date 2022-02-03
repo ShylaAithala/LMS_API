@@ -3,9 +3,12 @@ package com.ninja.lms.service;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.ninja.lms.entity.Batch;
@@ -20,7 +23,8 @@ public class BatchService {
 
 	@Resource
 	BatchRepository batchRepo;
-	
+	Date utilDate = new Date();
+		
 
 	public List<Batch> getAllBatches() {
 		return batchRepo.findAll();
@@ -33,7 +37,6 @@ public class BatchService {
 
 
 	public Batch insertBatch(Batch newBatch) {
-		Date utilDate = new Date();
 		newBatch.setCreation_time(new Timestamp(utilDate.getTime()));
 		newBatch.setLast_mod_time(new Timestamp(utilDate.getTime()));
 		List<Batch> l= checkProgramBatchExists(newBatch);
@@ -47,15 +50,40 @@ public class BatchService {
 		}
 	}
 
-	public Batch updateBatch(Batch updateBatch, String batchId) {
-		return null;
+	public Batch updateBatch(Batch updateBatch, int batchId) throws DataNotFoundException {
+
+		if ((batchRepo.findBybatchPId(updateBatch.getBatch_program_id()).isEmpty())) {
+			throw new DataNotFoundException("Program id "+updateBatch.getBatch_program_id() +" not found ");
+		}
+		else {
+			
+		try {
+		Batch batchDataFromDb= batchRepo.findById(batchId).orElseThrow(()->new DataNotFoundException("Batch id "+batchId+" not found "));
+		updateBatch.setCreation_time(batchDataFromDb.getCreation_time());
+		updateBatch.setBatch_id(batchId);
+		updateBatch.setLast_mod_time(new Timestamp(utilDate.getTime()));
+		return batchRepo.save(updateBatch);
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DataIntegrityViolationException(e.getMessage());
+			}
+		}
 	}
-	
 	private List<Batch>  checkProgramBatchExists(Batch batch) {
 		String batchName=batch.getBatch_name();
 		int batchPId=batch.getBatch_program_id();
 		
 	return batchRepo.findByBatchNameAndBatchPId(batchName,batchPId);
+	}
+
+
+	public void deleteUserById(int id) throws Exception {
+		boolean exists = batchRepo.existsById(id);
+		if(!exists)
+			throw new DataNotFoundException("Batch id- " + id + " Not Found !!");
+		else
+			batchRepo.deleteById(id);
+		
 	}
 	}
 

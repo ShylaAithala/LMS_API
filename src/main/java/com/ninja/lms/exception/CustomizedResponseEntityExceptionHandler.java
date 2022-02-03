@@ -2,6 +2,8 @@ package com.ninja.lms.exception;
 
 import java.util.Date;
 
+import org.springframework.core.NestedExceptionUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,5 +34,13 @@ public class CustomizedResponseEntityExceptionHandler{
 		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
 	   
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public final ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
+		   
+				ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), NestedExceptionUtils.getMostSpecificCause(ex).getMessage(), request.getDescription(false));
+			   
+				return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+				
 	}
 	}

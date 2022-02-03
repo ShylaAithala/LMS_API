@@ -42,7 +42,7 @@ public class BatchController {
 		}
 	
 	 @GetMapping("/batches/{id}")
-	 ResponseEntity<Batch> getBatchById(@PathVariable int id){
+	 ResponseEntity<Batch> getBatchById(@PathVariable("id") int id) throws Exception{
 	
 		Batch batch = batchService.getBatchUserWithId(id);
 		return new ResponseEntity<>(batch, HttpStatus.OK);

@@ -31,8 +31,9 @@ public class BatchService {
 	}
 
 
-	public Batch getBatchUserWithId(int id) {
-		 return batchRepo.findById(id).orElseThrow();
+	public Batch getBatchUserWithId(int id) throws Exception {
+		 return batchRepo.findById(id).orElseThrow(()->new DataNotFoundException("Batch id "+id+" not found "));
+
 	}
 
 

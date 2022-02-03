@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ninja.lms.entity.ExceptionResponse;
 
+
 @ControllerAdvice
 @RestController
 public class CustomizedResponseEntityExceptionHandler{

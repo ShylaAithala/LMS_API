@@ -13,6 +13,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import io.swagger.annotations.ApiModelProperty;
+
 
 
 @Entity
@@ -25,6 +27,7 @@ public class Batch {
 	@Id
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty(hidden=true)
 	int batch_id;
 	@Column(name="batch_name")
 	String batchName;
@@ -36,8 +39,12 @@ public class Batch {
 	int batchPId;
 	@Column
 	int batch_no_of_classes;
+	
+	@ApiModelProperty(hidden=true)
 	@Column
 	Timestamp creation_time;
+	
+	@ApiModelProperty(hidden=true)
 	@Column
 	Timestamp last_mod_time;
 	

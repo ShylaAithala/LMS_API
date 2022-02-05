@@ -1,12 +1,17 @@
 package com.ninja.lms.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 
 @Entity
 @Table(name="TBL_LMS_PROGRAM")
@@ -27,7 +32,30 @@ public class Program {
 	@Column
 	Timestamp last_mod_time;
 	
-		
+	@OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST}, mappedBy = "program") 
+	@JsonIgnore
+	List<Batch> Batch;
+
+
+	public Program(int program_id, String program_name, String program_description, String program_status,
+			Timestamp creation_time, Timestamp last_mod_time, List<com.ninja.lms.entity.Batch> batch) {
+		super();
+		this.program_id = program_id;
+		this.program_name = program_name;
+		this.program_description = program_description;
+		this.program_status = program_status;
+		this.creation_time = creation_time;
+		this.last_mod_time = last_mod_time;
+		Batch = batch;
+	}
+
+
+	public Program() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
 	public int getProgram_id() {
 		return program_id;
 	}
@@ -64,6 +92,17 @@ public class Program {
 	public void setLast_mod_time(Timestamp last_mod_time) {
 		this.last_mod_time = last_mod_time;
 	}
+
+	public List<Batch> getBatch() {
+		return Batch;
+	}
+
+
+	public void setBatch(List<Batch> batch) {
+		Batch = batch;
+	}
+
+	 
 	
 	
 	

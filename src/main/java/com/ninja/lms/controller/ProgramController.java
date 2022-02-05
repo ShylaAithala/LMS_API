@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ninja.lms.dto.ProgramDto;
 import com.ninja.lms.entity.Program;
 import com.ninja.lms.service.ProgramService;
 
@@ -28,13 +29,13 @@ public class ProgramController {
 	
 	/** Get all Program Details **/
 	@GetMapping("/programs")
-	public List<Program> getAllPrograms() {
+	public List<ProgramDto> getAllPrograms() {
 		return programService.getAllPrograms();
 	}
 	
 	/** Get Program Details for one program using ProgramId**/
 	@GetMapping("/programs/{id}")
-	public Optional<Program> getProgram(@PathVariable int id) {
+	public List<ProgramDto> getProgram(@PathVariable int id) {
 		return programService.getProgram(id);
 	}
 	
@@ -55,11 +56,25 @@ public class ProgramController {
 		return new ResponseEntity<>(updatedProgram, HttpStatus.CREATED);
 	}
 	
-	/** Delete Program**/
+	/** Delete Program
+	 * @return 
+	 */
 	@DeleteMapping("/programs/{id}")
-	public void deleteProgram(@PathVariable int id) throws Exception{
+	public String deleteProgram(@PathVariable int id) throws Exception{
 		programService.deleteProgram(id);
+		return "Program "+ id + " Deleted successfully ";
+		
+	}
+	/**Get All Programs and Batches**/
+	@GetMapping("/programsBatches")
+	public List<Program> getAllProgramsAndBatches(){
+		return programService.getAllProgramsAndBatches();
 		
 	}
 	
+	@GetMapping("/programsBatches/{id}")
+	public Optional<Program> getProgramAndBatches(@PathVariable int id){
+		return programService.getProgramAndBatches(id);
+		
+	}
 }

@@ -3,15 +3,19 @@ package com.ninja.lms.entity;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -47,6 +51,11 @@ public class Batch {
 	@ApiModelProperty(hidden=true)
 	@Column
 	Timestamp last_mod_time;
+	
+	@ManyToOne(cascade=  {CascadeType.DETACH, CascadeType.PERSIST})
+	@JoinColumn(name = "batch_program_id",insertable = false, updatable = false)
+	@JsonBackReference 
+	private Program program;
 	
 	
 	public int getBatch_id() {
@@ -97,5 +106,14 @@ public class Batch {
 	public void setLast_mod_time(Timestamp last_mod_time) {
 		this.last_mod_time = last_mod_time;
 	}
+	public Program getProgram() {
+		return program;
+	}
+	public void setProgram(Program program) {
+		this.program = program;
+	}
+	
+	
+	
 
 }

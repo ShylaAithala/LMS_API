@@ -3,18 +3,18 @@ package com.ninja.lms.service;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.ninja.lms.entity.Batch;
+import com.ninja.lms.exception.AlreadyExistsValidationException;
 import com.ninja.lms.exception.DataNotFoundException;
-import com.ninja.lms.exception.FieldValidationException;
 import com.ninja.lms.repository.BatchRepository;
+import com.ninja.lms.repository.ProgramRepository;
 
 
 @Service
@@ -23,6 +23,9 @@ public class BatchService {
 
 	@Resource
 	BatchRepository batchRepo;
+	
+	@Autowired
+	ProgramRepository programRepo;
 	Date utilDate = new Date();
 		
 
@@ -37,17 +40,23 @@ public class BatchService {
 	}
 
 
-	public Batch insertBatch(Batch newBatch) {
+	public Batch insertBatch(Batch newBatch) throws Exception {
 		newBatch.setCreation_time(new Timestamp(utilDate.getTime()));
 		newBatch.setLast_mod_time(new Timestamp(utilDate.getTime()));
+		
+		if ((batchRepo.findBybatchPId(newBatch.getBatch_program_id()).isEmpty())) {
+			throw new DataNotFoundException("Program id "+newBatch.getBatch_program_id() +" not found ");
+		}
+		else {
 		List<Batch> l= checkProgramBatchExists(newBatch);
 		if(l.size()==0)
 		{
 			return batchRepo.save(newBatch);
 		}
 		else
-		{	throw new FieldValidationException("Batch Name:"+newBatch.getBatch_name()+" Program ID:"+newBatch.getBatch_program_id()+" Already Exists !!");
+		{	throw new AlreadyExistsValidationException("Batch Name:"+newBatch.getBatch_name()+" Program ID:"+newBatch.getBatch_program_id()+" Already Exists !!");
 	
+		}
 		}
 	}
 
@@ -85,6 +94,15 @@ public class BatchService {
 		else
 			batchRepo.deleteById(id);
 		
+	}
+
+
+	public List<Batch> getBatchByProgramId(int programId) throws Exception {
+		  if (!programRepo.existsById(programId)) {
+		      throw new DataNotFoundException("Not found Program  with id = " + programId);
+		    }
+		    List<Batch> batches = batchRepo.findBybatchPId(programId);
+		    return batches;
 	}
 	}
 

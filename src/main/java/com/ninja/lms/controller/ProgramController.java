@@ -73,7 +73,7 @@ public class ProgramController {
 	}
 	
 	@GetMapping("/programsBatches/{id}")
-	public Optional<Program> getProgramAndBatches(@PathVariable int id){
+	public Optional<Program> getProgramAndBatches(@PathVariable int id) throws Exception{
 		return programService.getProgramAndBatches(id);
 		
 	}

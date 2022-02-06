@@ -1,6 +1,5 @@
 package com.ninja.lms.entity;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.persistence.CascadeType;
@@ -12,10 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -34,29 +34,40 @@ public class Batch {
 	@ApiModelProperty(hidden=true)
 	int batch_id;
 	@Column(name="batch_name")
+	@NotBlank (message = "Batch Name is mandatory")
 	String batchName;
 	@Column
 	String batch_description;
 	@Column
 	String batch_status;
 	@Column(name="batch_program_id")
+	@NotNull(message = "Program Id is required")
 	int batchPId;
 	@Column
 	int batch_no_of_classes;
 	
 	@ApiModelProperty(hidden=true)
+	@JsonIgnore
 	@Column
 	Timestamp creation_time;
 	
 	@ApiModelProperty(hidden=true)
+	@JsonIgnore
 	@Column
 	Timestamp last_mod_time;
 	
+
 	@ManyToOne(cascade=  {CascadeType.DETACH, CascadeType.PERSIST})
 	@JoinColumn(name = "batch_program_id",insertable = false, updatable = false)
 	@JsonBackReference 
 	private Program program;
 	
+/*
+	 @ManyToOne(fetch = FetchType.LAZY, optional = false)
+	 @JoinColumn(name = "batch_program_id",insertable = false,updatable =false, nullable = false)
+	 @JsonIgnore
+	 private Program program;
+	 */
 	
 	public int getBatch_id() {
 		return batch_id;

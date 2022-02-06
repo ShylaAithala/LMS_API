@@ -1,12 +1,7 @@
 package com.ninja.lms.controller;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
 
 import javax.validation.Valid;
 
@@ -21,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.ninja.lms.entity.Batch;
 import com.ninja.lms.service.BatchService;
 
@@ -33,6 +29,7 @@ public class BatchController {
 	BatchService batchService;
 	
 
+	
 	@GetMapping("/batches")
 	public ResponseEntity<List<Batch>> getAllBatches() {
 		
@@ -49,14 +46,22 @@ public class BatchController {
 		
 		}
 	 
+	  @GetMapping("/program/{programId}/batches")
+	  public ResponseEntity<List<Batch>> getAllBatchesByProgramlId(@PathVariable(value = "programId") int programId) throws Exception {
+	   
+		  List<Batch> batches=batchService.getBatchByProgramId(programId);
+		  return new ResponseEntity<>(batches, HttpStatus.OK);
+		  
+			  }
+	 
 	 @PostMapping("/batches")
-	 ResponseEntity<Batch>  createBatch( @RequestBody Batch newBatch) throws URISyntaxException{
+	 ResponseEntity<Batch>  createBatch(@Valid @RequestBody Batch newBatch) throws Exception{
 		Batch batch = batchService.insertBatch(newBatch);
 		return ResponseEntity.created(new URI("/batches/" + batch.getBatch_id())).body(batch);
 		}
 	 
 	@PutMapping("/batches/{id}")
-	public ResponseEntity<Batch> updateUser( @RequestBody Batch updateBatch, @PathVariable("id") int batchId) throws Exception {
+	public ResponseEntity<Batch> updateUser(@Valid @RequestBody Batch updateBatch, @PathVariable("id") int batchId) throws Exception {
 			
 			Batch batch = batchService.updateBatch(updateBatch, batchId);
 			return new ResponseEntity<>(batch, HttpStatus.CREATED);
@@ -67,6 +72,6 @@ public class BatchController {
 	public String deleteBatch(@PathVariable("id") int id) throws Exception {
 		batchService.deleteUserById(id);
 
-		return "Batch "+ id +"Deleted successfully ";
+		return "Batch "+ id +" Deleted successfully ";
 	}
 }

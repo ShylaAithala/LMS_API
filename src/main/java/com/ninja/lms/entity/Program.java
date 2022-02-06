@@ -30,8 +30,10 @@ public class Program {
 	@Column
 	String program_status;
 	@Column
+	@JsonIgnore
 	Timestamp creation_time;
 	@Column
+	@JsonIgnore
 	Timestamp last_mod_time;
 	
 	@OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST}, mappedBy = "program") 

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 
 import com.ninja.lms.dto.ProgramDto;
 import com.ninja.lms.entity.Program;
+import com.ninja.lms.exception.AlreadyExistsValidationException;
 import com.ninja.lms.exception.DataNotFoundException;
-import com.ninja.lms.exception.FieldValidationException;
 import com.ninja.lms.repository.ProgramRepository;
 
 /**
@@ -63,7 +63,7 @@ public class ProgramService {
 		
 		//Check if Program Name is null or blank
 		if (newProgram.getProgram_name() ==null || newProgram.getProgram_name().isBlank()) {
-			throw new FieldValidationException("Cannot create Program as Program Name cannot be null or blank");
+			throw new AlreadyExistsValidationException("Cannot create Program as Program Name cannot be null or blank");
 		}
 		
 		//Check if Program Name already exists
@@ -73,7 +73,7 @@ public class ProgramService {
 			boolean isProgramNameExists = checkDuplicateProgramName(programList, newProgram.getProgram_name());
 			if(isProgramNameExists) 
 			{
-				throw new FieldValidationException("Cannot create Program as Program Name already exists");
+				throw new AlreadyExistsValidationException("Cannot create Program as Program Name already exists");
 			}
 		}
 		
@@ -120,7 +120,7 @@ public class ProgramService {
 			  boolean isProgramNameExists = checkDuplicateProgramName(programList, updatedProgram.getProgram_name());
 			  if(isProgramNameExists) 
 			  {
-				  throw new FieldValidationException("Failed to update existing Program details as Program Name already exists !!");
+				  throw new AlreadyExistsValidationException("Failed to update existing Program details as Program Name already exists !!");
 			  }
 		  }
 		  else 
@@ -162,6 +162,7 @@ public class ProgramService {
 	 * @return
 	 */
 	public List<Program> getAllProgramsAndBatches(){
+		
 		return programRepo.findAll();
 	}
 	
@@ -170,8 +171,12 @@ public class ProgramService {
 	 * @param id
 	 * @return
 	 */
-	public Optional<Program> getProgramAndBatches(int programId) {
-		return programRepo.findById(programId);
+	public Optional<Program> getProgramAndBatches(int programId) throws Exception {
+		boolean isProgramIdExists = programRepo.existsById(programId);
+		if(!isProgramIdExists)
+			throw new DataNotFoundException("ProgramId " + programId + " Not Found !!");
+		
+		else return programRepo.findById(programId);
 	}
 	
 	

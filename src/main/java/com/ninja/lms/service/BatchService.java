@@ -44,8 +44,8 @@ public class BatchService {
 		newBatch.setCreation_time(new Timestamp(utilDate.getTime()));
 		newBatch.setLast_mod_time(new Timestamp(utilDate.getTime()));
 		
-		if ((batchRepo.findBybatchPId(newBatch.getBatch_program_id()).isEmpty())) {
-			throw new DataNotFoundException("Program id "+newBatch.getBatch_program_id() +" not found ");
+		if ((batchRepo.findBybatchPId(newBatch.getBatchPId()).isEmpty())) {
+			throw new DataNotFoundException("Program id "+newBatch.getBatchPId() +" not found ");
 		}
 		else {
 		List<Batch> l= checkProgramBatchExists(newBatch);
@@ -54,7 +54,7 @@ public class BatchService {
 			return batchRepo.save(newBatch);
 		}
 		else
-		{	throw new AlreadyExistsValidationException("Batch Name:"+newBatch.getBatch_name()+" Program ID:"+newBatch.getBatch_program_id()+" Already Exists !!");
+		{	throw new AlreadyExistsValidationException("Batch Name:"+newBatch.getBatchName()+" Program ID:"+newBatch.getBatchPId()+" Already Exists !!");
 	
 		}
 		}
@@ -62,8 +62,8 @@ public class BatchService {
 
 	public Batch updateBatch(Batch updateBatch, int batchId) throws DataNotFoundException {
 
-		if ((batchRepo.findBybatchPId(updateBatch.getBatch_program_id()).isEmpty())) {
-			throw new DataNotFoundException("Program id "+updateBatch.getBatch_program_id() +" not found ");
+		if ((batchRepo.findBybatchPId(updateBatch.getBatchPId()).isEmpty())) {
+			throw new DataNotFoundException("Program id "+updateBatch.getBatchPId() +" not found ");
 		}
 		else {
 			
@@ -80,8 +80,8 @@ public class BatchService {
 		}
 	}
 	private List<Batch>  checkProgramBatchExists(Batch batch) {
-		String batchName=batch.getBatch_name();
-		int batchPId=batch.getBatch_program_id();
+		String batchName=batch.getBatchName();
+		int batchPId=batch.getBatchPId();
 		
 	return batchRepo.findByBatchNameAndBatchPId(batchName,batchPId);
 	}

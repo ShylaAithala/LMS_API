@@ -61,7 +61,7 @@ public class BatchController {
 		}
 	 
 	@PutMapping("/batches/{id}")
-	public ResponseEntity<Batch> updateUser(@Valid @RequestBody Batch updateBatch, @PathVariable("id") int batchId) throws Exception {
+	public ResponseEntity<Batch> updateBatch(@Valid @RequestBody Batch updateBatch, @PathVariable("id") int batchId) throws Exception {
 			
 			Batch batch = batchService.updateBatch(updateBatch, batchId);
 			return new ResponseEntity<>(batch, HttpStatus.CREATED);

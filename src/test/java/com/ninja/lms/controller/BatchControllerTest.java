@@ -1,12 +1,17 @@
 package com.ninja.lms.controller;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +20,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ninja.lms.entity.Batch;
-import com.ninja.lms.entity.Program;
 import com.ninja.lms.repository.BatchRepository;
 import com.ninja.lms.repository.ProgramRepository;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.mock;
 
 @WebMvcTest(value = BatchController.class)
 
@@ -77,7 +76,7 @@ public class BatchControllerTest {
 	                .andExpect(jsonPath("$", notNullValue()))
 	                .andExpect(jsonPath("$.batchName", is("Java")));
 	    }
-	    
+	   
 	  /*  @Test
 	    @WithMockUser(username="username", password="password")
 	    public void createBatch_success() throws Exception {
